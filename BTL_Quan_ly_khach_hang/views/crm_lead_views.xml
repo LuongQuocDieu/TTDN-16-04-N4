@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Extend Lead Form -->
+    <record id="view_crm_lead_form_btl" model="ir.ui.view">
+        <field name="name">crm.lead.form.btl</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Thêm buttons trên header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_convert_to_customer" string="Chuyển đổi thành khách hàng" 
+                        type="object" class="btn-primary" 
+                        invisible="stage_status == 'won'"/>
+                <button name="action_view_interactions" string="Lịch sử tương tác" type="object" 
+                        class="oe_stat_button" icon="fa-history"
+                        invisible="interaction_count == 0"/>
+                <button name="action_create_interaction" string="Tạo tương tác" type="object" class="btn-primary"/>
+            </xpath>
+            
+            <!-- Thêm thông tin nguồn -->
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="source_btl_id"/>
+                <field name="employee_id"/>
+                <field name="employee_department" invisible="not employee_id"/>
+            </xpath>
+            
+            <!-- Thêm tab thông tin bổ sung -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Thông tin bổ sung">
+                    <group>
+                        <group>
+                            <field name="company_size"/>
+                            <field name="industry_btl"/>
+                            <field name="tax_code"/>
+                        </group>
+                        <group>
+                            <field name="budget"/>
+                            <field name="priority_btl" widget="priority"/>
+                            <field name="quality_score"/>
+                            <field name="probability" widget="progressbar"/>
+                            <field name="stage_status"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="interested_product_ids" widget="many2many_tags"/>
+                    </group>
+                </page>
+                
+                <page string="Lịch sử tương tác">
+                    <group>
+                        <group>
+                            <field name="interaction_count"/>
+                            <field name="last_interaction_date"/>
+                        </group>
+                        <group string="Thống kê">
+                            <field name="total_calls"/>
+                            <field name="total_meetings"/>
+                            <field name="total_emails"/>
+                        </group>
+                    </group>
+                    <field name="interaction_ids">
+                        <list>
+                            <field name="date"/>
+                            <field name="interaction_type_id"/>
+                            <field name="title"/>
+                            <field name="user_id"/>
+                            <field name="outcome"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                </page>
+                
+                <page string="🤖 AI Predictive Scoring">
+                    <group string="Kết quả dự đoán AI">
+                        <group>
+                            <field name="ai_score" widget="percentpie"/>
+                            <field name="ai_will_convert" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="ai_confidence"/>
+                            <field name="ai_risk_level"/>
+                            <field name="ai_last_update" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Giải thích">
+                        <div>
+                            <p><strong>Điểm dự đoán AI (%):</strong> Xác suất lead này sẽ chuyển đổi thành khách hàng (0-100%)</p>
+                            <p><strong>Dự đoán chuyển đổi:</strong> Mô hình dự đoán lead sẽ chuyển đổi hay không</p>
+                            <p><strong>Độ tin cậy (%):</strong> Mức độ tin cậy của dự đoán</p>
+                            <p><strong>Mức rủi ro:</strong>
+                                <br/>• Rất cao (≥80%): Follow-up ngay
+                                <br/>• Cao (60-80%): Ưu tiên cao
+                                <br/>• Trung bình (40-60%): Cần thêm info
+                                <br/>• Thấp (20-40%): Quyết định cá nhân
+                                <br/>• Rất thấp (&lt;20%): Cân nhắc loại bỏ
+                            </p>
+                        </div>
+                    </group>
+                </page>
+            </xpath>
+            
+        </field>
+    </record>
+    
+
+    
+</odoo>
